@@ -2,7 +2,7 @@
 const express = require("express");
 // activate or tell this app variable to be an express server
 const app = express();
-const router = express.Router();
+
 
 //start the web server
 app.listen(3000, function() {
@@ -14,7 +14,7 @@ app.listen(3000, function() {
   */
 
 // GET or a regular request when someone goes to http://localhost:3000/hello, when using a fx in a route, almost always have a parameter or handle a response & request
-/**
+
 app.get("/hello", function(req, res){
     res.send("<h1>Hello Express</h1>")
 })
@@ -22,4 +22,4 @@ app.get("/hello", function(req, res){
 app.get("/goodbye", function(req, res) {
     res.send("<h1>Goodbye, Express!</h1>")
 })
-*/
+
