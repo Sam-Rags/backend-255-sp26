@@ -12,23 +12,29 @@ app.use(cors());
 app.use(bodyParser.json())
 
 // grab all the songs in a database
-router.get("/songs", function(req, res){
-    let query = {}
-    if(req.query.genre) {
-        query = {genre : req.query.genre}
+router.get("/songs", async(req, res) =>{
+    try{
+        const songs = await Song.find({})
+        res.send(songs)
+        console.log("Song list: " + songs)
     }
-
-    //to find all songs in a db, use the find() method build into mongo
-    Song.find(query, function(err, songs){
-        if(err){
-            res.status(400).send(err)
-        }
-        else{
-            res.json(songs)
-        }
-    })
+    catch (err) {
+        console.log(err)
+    }
 })
 
+
+router.post("/songs", async(req, res) =>{
+    try {
+        const song = await new Song(req.body)
+        await song.save()
+        res.status(201).json(song)
+        console.log("Succesfully added song: " + song)
+    }
+    catch(err) {
+        res.status(400).send(err)
+    }
+})
 
 /**making an api using routes
  routes are used to handle browser requests. They look like URLs. The difference is that when a browser requests a route, 
