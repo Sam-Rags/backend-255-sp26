@@ -3,6 +3,7 @@ const db = require("../db");
 
 // This is the model for a song entry in the database
 const Song = db.model("Song",{
+    // hidden parameter of _id
     title:      {type:String, required:true},
     artist:     String,
     popularity: {type:Number, min:1, max:10},

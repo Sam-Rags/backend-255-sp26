@@ -12,7 +12,7 @@ app.use(cors());
 app.use(bodyParser.json())
 
 // grab all the songs in a database
-router.get("/songs", async(req, res) =>{
+router.get("/songs", async(req, res) => {
     try{
         const songs = await Song.find({})
         res.send(songs)
@@ -23,13 +23,39 @@ router.get("/songs", async(req, res) =>{
     }
 })
 
+// grab a single song in the DB
+router.get("/songs/:id", async (req, res) => {
+    try {
+        const song = await Song.findById(req.params.id)
+        res.json(song)
+    }
+    catch(err) {
+        res.status(400).send(err)
+    }
+})
 
+// adding a song to the DB
 router.post("/songs", async(req, res) =>{
     try {
         const song = await new Song(req.body)
         await song.save()
         res.status(201).json(song)
         console.log("Succesfully added song: " + song)
+    }
+    catch(err) {
+        res.status(400).send(err)
+    }
+})
+
+// an update is to update an existing record,resource,db entry. Uses a PUT request
+router.put("/songs/:id", async(req, res) =>{
+    //first we need to find & update the song the front end is asking for
+    // to do this we need to request the ID of the song, from the request & then find it in the database & update it
+    try {
+        const song = req.body
+        await Song.updateOne({_id: req.params.id}, song)
+        console.log(song)
+        res.sendStatus(204)
     }
     catch(err) {
         res.status(400).send(err)
