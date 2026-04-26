@@ -1,10 +1,10 @@
 // mongoose import statement & the URL of our hosted DB w/ username/pw in the url
+const {MongoClient, ServerApiVersion } = require('mongodb')
 const mongoose = require('mongoose')
-//const {MongoClient, ServerApiVersion} = require('mongodb')
-// const uri = "mongodb+srv://sdev255:password23@songdb.uyxggks.mongodb.net/admin?appName=SongDB"
+
 async function run() {
     try{
-await mongoose.connect("mongodb://localhost/songs", {useNewUrlParser: true, useUnifiedTopology: true})
+await mongoose.connect("mongodb://localhost/songs")
         console.log("Successfully connected to DB")
     } catch (err) {
         console.error(err)
