@@ -6,10 +6,38 @@ var cors = require('cors');
 const app = express();
 const router = express.Router();
 const bodyParser = require('body-parser')
+const jwt = require('jwt-simple')
 const Song = require('./models/songs')
+const User = require('./models/users')
+
 app.use(cors());
 
 app.use(bodyParser.json())
+const secret = "supersecret"
+
+// creating a new user
+router.post("/user", async(req, res) =>{
+    if(!req.body.username || !req.body.password) {
+        res.status(400).json({error: "Missing username or password"})
+    }
+
+    const newUser = new User({
+        username: req.body.username,
+        password: req.body.password,
+        status: req.body.status
+    })
+
+    try {
+        await newUser.save()
+        console.log(newUser)
+        res.status(201).send("User created") //created
+    }
+    catch(err) {
+        console.log(err)
+        res.status(400).send(err)
+    }
+
+})
 
 // grab all the songs in a database
 router.get("/songs", async(req, res) => {
@@ -62,38 +90,23 @@ router.put("/songs/:id", async(req, res) =>{
     }
 })
 
-/**making an api using routes
- routes are used to handle browser requests. They look like URLs. The difference is that when a browser requests a route, 
- it is dynamically handled by using a function
-  */
- /**app.get("/", function(req, res) {
-    res.send(
-        "<a href='/api/songs'>Go to Songs</a>")
- })*/
-
-// router.get("/songs", function(req, res){
-//     const songs = [
-//         {
-//             title: "We Found Love",
-//             artist: "Rhianna",
-//             popularity: 10,
-//             releaseDate: new Date(2011, 9, 22),
-//             genre: ["electro house"]
-//         },
-//         {
-//             title: "Happy",
-//             artist: "Pharrell Williams",
-//             popularity: 10,
-//             releaseDate: new Date(2013, 11, 21),
-//             genre: ["soul", "new soul"]
-//         }
-//     ];
-
-//     res.json(songs);
-// })
+router.delete("/songs/:id", async(req, res) => {
+    //mongo/mongoose fx to delete a single song object
+    try {
+        const song = await Song.findById(req.params.id)
+        console.log(song)
+        await Song.deleteOne({_id: song._id})
+        res.sendStatus(204)
+    }
+    catch(err) {
+        res.status(400).send(err)
+    }
+})
 
 
 // all requests that usually use an api start with /api e.g. localhost:3000/api/songs
 app.use("/api", router)
+//listen on the env port (for a live server or 3000 for local)
+var port = process.env.PORT || 3000
 //start the web server
-app.listen(3000)
+app.listen(port)
